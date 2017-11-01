@@ -15,6 +15,8 @@ exports.paths = {
   list: path.join(__dirname, '../archives/sites.txt')
 };
 
+var paths = exports.paths;
+
 // Used for stubbing paths for tests, do not modify
 exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
@@ -26,16 +28,30 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  fs.readFile(paths.list, (err, data) => {
+    if (err) { console.log(err); }
+    if (data) { callback(data.toString().split('\n')); }
+  });
 };
 
 exports.isUrlInList = function(url, callback) {
+  exports.readListOfUrls(function(array) {
+    callback(array.includes(url));
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
+  fs.appendFile(paths.list, '\n' + url, callback);
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.readdir(paths.archivedSites, (err, array) => {
+    callback(array.includes(url));
+  });
 };
 
 exports.downloadUrls = function(urls) {
+  urls.forEach(url => {
+    fs.writeFile(paths.archivedSites + '/' + url, '');
+  });
 };
