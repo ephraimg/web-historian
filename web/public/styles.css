@@ -1,4 +1,12 @@
 body {
-  margin : 0px;
+  margin: 30px;
   font-family: arial, sans-serif;
+}
+
+header {
+  color: red;
+}
+
+input {
+  margin: 10px 0px;
 }
