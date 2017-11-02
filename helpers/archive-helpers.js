@@ -62,7 +62,7 @@ exports.downloadUrls = function(urls) {
         file = Buffer.concat(file).toString();
         // save the response we get
         fs.writeFile(paths.archivedSites + '/' + url, file, (err, data) => {
-          console.log('error: ', err);
+          if (err) { console.log('error: ', err); }
         });
       });
     });
