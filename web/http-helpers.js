@@ -27,14 +27,25 @@ var getContentType = function(asset) {
   return mimeMap[ext];
 };
 
+exports.getBody = function(req, callback) {
+  var body = [];
+  req.on('data', chunk => {
+    body.push(chunk);
+  });
+  req.on('end', () => {
+    body = Buffer.concat(body).toString();
+    callback(body);
+  });
+};
+
 exports.serveAssets = function(res, asset, statusCode, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
     
-  if (asset === '/') { asset = '/index.html'; }
+  if (asset === '/') { asset = 'index.html'; }
 
-  fs.readFile(archive.paths.siteAssets + asset, function(error, data) {
+  fs.readFile(archive.paths.siteAssets + '/' + asset, function(error, data) {
     if (error) {
       console.log(error);          
     }
