@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var http = require('http');
 var _ = require('underscore');
 
 /*
@@ -41,7 +42,7 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
-  fs.appendFile(paths.list, '\n' + url, callback);
+  fs.appendFile(paths.list, url + '\n', callback);
 };
 
 exports.isUrlArchived = function(url, callback) {
@@ -52,6 +53,21 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   urls.forEach(url => {
-    fs.writeFile(paths.archivedSites + '/' + url, '');
+    var theUrl = 'http://' + url;
+    http.get(theUrl, res => { 
+      var file = [];
+      res.on('data', chunk => {
+        file.push(chunk);
+      }).on('end', () => {
+        file = Buffer.concat(file).toString();
+        // save the response we get
+        fs.writeFile(paths.archivedSites + '/' + url, file, (err, data) => {
+          console.log('error: ', err);
+        });
+      });
+    });
   });
 };
+
+
+
